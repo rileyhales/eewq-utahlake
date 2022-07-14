@@ -6,16 +6,15 @@ from sklearn.metrics import mean_squared_error
 
 
 prepared_data = pd.read_csv('prepared_data.csv')
+X = prepared_data.drop(columns=['Result Value', ]).values
+y = prepared_data['Result Value'].values
 
-for alpha in [1, ]:
-    rkfolder = RepeatedKFold(n_splits=20, n_repeats=50)
-    X = prepared_data.drop(columns=['Result Value',]).values
-    y = prepared_data['Result Value'].values
-
+for alpha in [1, 5, 10, 15]:
     coefficients = []
     iteration_metrics = []
-    iter_metrics_labels = ['me_test', 'mse_test']
+    iter_metrics_labels = ['me_test', 'mse_test', 'me_train', 'mse_train']
 
+    rkfolder = RepeatedKFold(n_splits=20, n_repeats=10)
     for i, (train_index, test_index) in enumerate(rkfolder.split(X)):
         print(i)
         # split the train test data with the current kfold split indices
@@ -30,10 +29,13 @@ for alpha in [1, ]:
         coefficients.append(model.coef_)
 
         # record the test metrics for the predictions made this run
-        predictions = model.predict(X_test)
-        test_mse = mean_squared_error(y_test, predictions)
-        test_me = np.mean(y_test - predictions)
-        iteration_metrics.append([test_me, test_mse])
+        pred_test = model.predict(X_test)
+        pred_train = model.predict(X_train)
+        test_mse = mean_squared_error(y_test, pred_test)
+        test_me = np.mean(y_test - pred_test)
+        train_mse = mean_squared_error(y_train, pred_train)
+        train_me = np.mean(y_train - pred_train)
+        iteration_metrics.append([test_me, test_mse, train_me, train_mse])
 
-    pd.DataFrame(coefficients, columns=prepared_data.columns[1:]).to_csv('iteration_coefficients.csv')
-    pd.DataFrame(iteration_metrics, columns=iter_metrics_labels).to_csv('iteration_metrics.csv')
+    pd.DataFrame(coefficients, columns=prepared_data.columns[1:]).to_csv(f'results/kfolds_alpha_{alpha}_iteration_coefficients.csv')
+    pd.DataFrame(iteration_metrics, columns=iter_metrics_labels).to_csv(f'results/kfolds_alpha_{alpha}_iteration_metrics.csv')
