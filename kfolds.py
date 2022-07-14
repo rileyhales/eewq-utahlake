@@ -4,7 +4,6 @@ from sklearn.linear_model import Lasso
 from sklearn.model_selection import RepeatedKFold
 from sklearn.metrics import mean_squared_error
 
-
 prepared_data = pd.read_csv('prepared_data.csv')
 X = prepared_data.drop(columns=['Result Value', ]).values
 y = prepared_data['Result Value'].values
@@ -37,5 +36,7 @@ for alpha in [1, 5, 10, 15]:
         train_me = np.mean(y_train - pred_train)
         iteration_metrics.append([test_me, test_mse, train_me, train_mse])
 
-    pd.DataFrame(coefficients, columns=prepared_data.columns[1:]).to_csv(f'results/kfolds_alpha_{alpha}_iteration_coefficients.csv')
-    pd.DataFrame(iteration_metrics, columns=iter_metrics_labels).to_csv(f'results/kfolds_alpha_{alpha}_iteration_metrics.csv')
+    pd.DataFrame(coefficients, columns=prepared_data.columns[1:]).to_csv(
+        f'results/kfolds_alpha_{alpha}_iteration_coefficients.csv', index=False)
+    pd.DataFrame(iteration_metrics, columns=iter_metrics_labels).to_csv(
+        f'results/kfolds_alpha_{alpha}_iteration_metrics.csv', index=False)

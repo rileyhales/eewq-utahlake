@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-metrics_df = pd.read_csv('results/iteration_metrics.csv', index_col=0)
-coef_df = pd.read_csv('results/iteration_coefficients.csv', index_col=0)
+metrics_df = pd.read_csv('results/iteration_metrics.csv')
+coef_df = pd.read_csv('results/iteration_coefficients.csv')
 
 coef_df[coef_df == 0] = np.nan
 coef_df = coef_df.dropna(axis=1, how='all')
