@@ -19,7 +19,7 @@ alphas = list(range(1, 51))
 for i, alpha in enumerate(alphas):
     print(i)
     # split the train test data
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=20)
 
     # fit lasso
     model = Lasso(alpha, max_iter=int(1e9))
@@ -46,4 +46,4 @@ coef_df.to_csv('results/alpha_varied_iteration_coefficients.csv', index=False)
 metr_df = pd.DataFrame(iteration_metrics, columns=iter_metrics_labels)
 metr_df['alpha'] = alphas
 metr_df['term_count'] = term_counts
-metr_df.to_csv('results/alpha_varied_iteration_metrics.csv', index=False)
+metr_df.to_csv('results/alpha_varied_iteration_metrics2.csv', index=False)
