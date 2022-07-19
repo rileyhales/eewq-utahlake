@@ -9,7 +9,7 @@ prepared_data = pd.read_csv('prepared_data.csv')
 X = prepared_data.drop(columns=['Result Value', ]).values
 y = prepared_data['Result Value'].values
 
-for alpha in range(1, 51):
+for alpha in range(1, 151):
     print(alpha)
     coefficients = []
     iteration_metrics = []
