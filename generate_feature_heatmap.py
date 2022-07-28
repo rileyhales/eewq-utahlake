@@ -16,7 +16,7 @@ ax.imshow(values, cmap=plt.cm.Blues)
 
 # Show all ticks and label them with the respective list entries
 ax.set_xticks(np.arange(len(x_labels)), labels=x_labels)
-ax.set_xlabel('Feature Names')
+# ax.set_xlabel('Feature Names')
 ax.set_yticks(np.arange(len(y_labels)), labels=y_labels)
 ax.set_ylabel('Term Count (Mode)')
 
@@ -28,7 +28,7 @@ values = np.round(values).astype(int)
 for i in range(len(y_labels)):
     for j in range(len(x_labels)):
         label = f'{values[i, j]}%' if values[i, j] > 0 else ""
-        text = ax.text(j, i, label, ha="center", va="center")
+        text = ax.text(j, i, label, ha="center", va="center", backgroundcolor="#FFFFFF72", fontweight="bold", fontsize=9)
 
 plt.show()
 fig.savefig('feature_heatmap.png')
