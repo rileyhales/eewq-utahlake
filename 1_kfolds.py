@@ -5,9 +5,11 @@ from sklearn.model_selection import RepeatedKFold
 from sklearn.metrics import mean_squared_error
 
 
+obs_val_col = 'measurement value'
+obs_val_col = 'Result Value'
 prepared_data = pd.read_csv('prepared_data.csv')
-X = prepared_data.drop(columns=['Result Value', ]).values
-y = prepared_data['Result Value'].values
+X = prepared_data.drop(columns=[obs_val_col, ]).values
+y = prepared_data[obs_val_col].values
 
 for alpha in range(1, 101):
     print(alpha)
