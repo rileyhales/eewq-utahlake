@@ -13,8 +13,9 @@ df.index.name = 'Feature Count (Mode)'
 df = df / np.nanmax(df.values)
 
 # Draw a heatmap with the numeric values in each cell
-fig, ax = plt.subplots(figsize=(9, 5), dpi=1000, tight_layout=True)
+fig, ax = plt.subplots(figsize=(15, 10), dpi=1000, tight_layout=True)
 sns.heatmap(df, cmap=plt.cm.Blues, annot=True, fmt=".1%", linewidths=.5, ax=ax, cbar=False)
 plt.setp(ax.get_xticklabels(), rotation=-40, ha='center', va='top')
 ax.set_title('Term Count vs Feature Selection Frequency', fontsize=14, fontweight='bold')
-fig.savefig('feature_heatmap_seaborn.png')
+fig.savefig('figures/feature_heatmap_seaborn.png')
+fig.show()

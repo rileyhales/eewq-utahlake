@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 import glob
 
-num_samples = pd.read_csv('prepared_data.csv').shape[0]
+num_samples = pd.read_csv('final_prepared_data_30.csv').shape[0]
 
 table_val = {
     "alpha": [],
@@ -105,13 +105,13 @@ for csv in sorted(glob.glob('results/kfolds_alpha_*metrics.csv')):
     table_val["mse_test_25"].append(df["mse_test"].quantile(0.25))
     table_val["mse_test_75"].append(df["mse_test"].quantile(0.75))
 
-    table_val["sse_test_mean"].append(df["sse_tst"].mean())
-    table_val["sse_test_median"].append(df["sse_tst"].median())
-    table_val["sse_test_std"].append(df["sse_tst"].std())
-    table_val["sse_test_min"].append(df["sse_tst"].min())
-    table_val["sse_test_max"].append(df["sse_tst"].max())
-    table_val["sse_test_25"].append(df["sse_tst"].quantile(0.25))
-    table_val["sse_test_75"].append(df["sse_tst"].quantile(0.75))
+    table_val["sse_test_mean"].append(df["sse_test"].mean())
+    table_val["sse_test_median"].append(df["sse_test"].median())
+    table_val["sse_test_std"].append(df["sse_test"].std())
+    table_val["sse_test_min"].append(df["sse_test"].min())
+    table_val["sse_test_max"].append(df["sse_test"].max())
+    table_val["sse_test_25"].append(df["sse_test"].quantile(0.25))
+    table_val["sse_test_75"].append(df["sse_test"].quantile(0.75))
 
     table_val["rmse_test_mean"].append(np.sqrt(df["mse_test"].sum()))
     table_val["rmse_test_median"].append(df["rmse_test"].median())
