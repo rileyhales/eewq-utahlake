@@ -4,14 +4,10 @@ from sklearn.linear_model import Lasso
 from sklearn.model_selection import RepeatedKFold
 from sklearn.metrics import mean_squared_error
 
+from multiprocessing import Pool
 
-obs_val_col = 'measurement value'
-# obs_val_col = 'Result Value'
-prepared_data = pd.read_csv('final_prepared_data_30_noDups.csv')
-X = prepared_data.drop(columns=[obs_val_col, ]).values
-y = prepared_data[obs_val_col].values
 
-for alpha in range(1, 101):
+def kfolds_alpha_test(alpha, X, y, prepared_data):
     print(alpha)
     coefficients = []
     iteration_metrics = []
@@ -44,6 +40,7 @@ for alpha in range(1, 101):
         iteration_metrics.append([test_me, test_mse, test_sse, train_me, train_mse, train_sse])
 
     coef_df = pd.DataFrame(coefficients, columns=prepared_data.columns[1:])
+
     term_counts = coef_df.apply(lambda x: len(x[x != 0]), axis=1)
     coef_df['alpha'] = alpha
     coef_df['term_count'] = term_counts
@@ -52,3 +49,14 @@ for alpha in range(1, 101):
     metr_df['alpha'] = alpha
     metr_df['term_count'] = term_counts
     metr_df.to_csv(f'results/kfolds_alpha_{alpha}_iteration_metrics.csv', index=False)
+
+
+if __name__ == '__main__':
+    obs_val_col = 'measurement value'
+    # obs_val_col = 'Result Value'
+    prepared_data = pd.read_csv('final_prepared_data_30_noDups.csv')
+    X = prepared_data.drop(columns=[obs_val_col, ]).values
+    y = prepared_data[obs_val_col].values
+
+    with Pool() as p:
+        p.starmap(kfolds_alpha_test, [(alpha, X, y, prepared_data) for alpha in np.logspace(0, 7, 8)])
