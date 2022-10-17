@@ -6,18 +6,26 @@ from sklearn.metrics import mean_squared_error
 
 LOG = True
 
+
 obs_val_col = 'measurement value'
-prepared_data = pd.read_csv('modelinput_uncorrectedChla_30m_v03.csv')
+prepared_data = pd.read_csv('modelinput_uncorrectedChla_30m_v03.csv', index_col=0)
 prepared_data = prepared_data[prepared_data['time window'] <= 72]
 y = prepared_data[obs_val_col].values
+
+path = '_nolog'
+alphas = np.linspace(1, 100, 100)
+
 if LOG:
     y = np.log10(y)
+    path = '_log'
+    alphas = np.linspace(.1, 10, 100)
+
 prepared_data = prepared_data.drop(columns=[obs_val_col, 'time window'])
 
 X = prepared_data.values
-iter_metrics_labels = ['me_test', 'mse_test', 'rmse_test', 'me_train', 'mse_train', 'rmse_train']
+iter_metrics_labels = ['me_test', 'mse_test', 'me_train', 'mse_train']
 
-for alpha in np.linspace(.1, 10, 100):
+for alpha in alphas:
     alpha = round(alpha, 1)
     print(f'alpha: {alpha}')
     coefficients = []
@@ -45,22 +53,20 @@ for alpha in np.linspace(.1, 10, 100):
             y_train = np.power(10, y_train)
 
         test_mse = mean_squared_error(y_test, pred_test)
-        test_rmse = np.sqrt(test_mse)
         test_me = np.mean(y_test - pred_test)
 
         train_mse = mean_squared_error(y_train, pred_train)
-        train_rmse = np.sqrt(train_mse)
         train_me = np.mean(y_train - pred_train)
 
-        iteration_metrics.append([test_me, test_mse, test_rmse, train_me, train_mse, train_rmse])
+        iteration_metrics.append([test_me, test_mse, train_me, train_mse])
 
     coef_df = pd.DataFrame(coefficients, columns=prepared_data.columns)
     term_counts = coef_df.apply(lambda x: len(x[x != 0]), axis=1)
     coef_df['alpha'] = alpha
     coef_df['term_count'] = term_counts
-    coef_df.to_csv(f'results/kfolds_alpha_{alpha}_iteration_coefficients.csv', index=False)
+    coef_df.to_csv(f'results{path}/kfolds_alpha_{alpha}_iteration_coefficients.csv', index=False)
 
     metr_df = pd.DataFrame(iteration_metrics, columns=iter_metrics_labels)
     metr_df['alpha'] = alpha
     metr_df['term_count'] = term_counts
-    metr_df.to_csv(f'results/kfolds_alpha_{alpha}_iteration_metrics.csv', index=False)
+    metr_df.to_csv(f'results{path}/kfolds_alpha_{alpha}_iteration_metrics.csv', index=False)

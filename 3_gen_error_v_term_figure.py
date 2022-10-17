@@ -2,10 +2,17 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-metrics_table = pd.read_csv('results/kfolds_alpha_metrics_table.csv')
+LOG = True
 
-fig, ax1 = plt.subplots(tight_layout=True, figsize=(8, 8), dpi=1800)
-fig.suptitle('LASSO Model RMSE and Term Count vs L1 Alpha Weight', fontsize=14, fontweight='bold')
+path = '_nolog'
+if LOG:
+    path = '_log'
+
+
+metrics_table = pd.read_csv(f'results{path}/kfolds_alpha_metrics_table.csv')
+
+fig, ax1 = plt.subplots(tight_layout=True, figsize=(10, 5), dpi=1800)
+fig.suptitle(f'LASSO Model RMSE and Term Count vs L1 Alpha Weight{" (LOG)" if LOG else ""}', fontsize=14, fontweight='bold')
 
 ax2 = plt.twinx(ax1)
 ax1.minorticks_on()
@@ -23,11 +30,8 @@ ax1.fill_between(metrics_table['alpha'], np.sqrt(metrics_table['mse_train_75']),
 
 ax2.plot(metrics_table['alpha'], metrics_table['term_count_mode'], color='blue', label='Term Count (Mode)')
 
-# ax1.legend()
-# ax2.legend()
-
 h1, l1 = ax1.get_legend_handles_labels()
 h2, l2 = ax2.get_legend_handles_labels()
 ax1.legend(h1 + h2, l1 + l2)
 
-fig.savefig('figures/error_vs_term_count.png')
+fig.savefig(f'figures{path}/error_vs_term_count.png')

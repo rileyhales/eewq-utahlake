@@ -1,10 +1,17 @@
 import pandas as pd
 import numpy as np
 import glob
+import os
+
+LOG = True
+
+path = '_nolog'
+if LOG:
+    path = '_log'
 
 num_samples = pd.read_csv('modelinput_uncorrectedChla_30m_v03.csv').shape[0]
 
-metrics = ['me', 'mse', 'rmse']
+metrics = ['me', 'mse']
 stats = ['mean', 'median', 'std', 'min', 'max', '25', '75']
 train_test = ['train', 'test']
 metric_labels = [f'{m}_{tt}_{stat}' for m in metrics for tt in train_test for stat in stats]
@@ -18,8 +25,8 @@ table_val = {
 for label in metric_labels:
     table_val[label] = []
 
-for csv in sorted(glob.glob('results/kfolds_alpha_*metrics.csv')):
-    alpha = float(csv.split('_')[2])
+for csv in sorted(glob.glob(f'results{path}/kfolds_alpha_*metrics.csv')):
+    alpha = float(os.path.basename(csv).split('_')[2])
 
     df = pd.read_csv(csv)
 
@@ -40,14 +47,13 @@ for csv in sorted(glob.glob('results/kfolds_alpha_*metrics.csv')):
 
 df = pd.DataFrame(table_val)
 df = df.sort_values(by='alpha')
-df.to_csv('results/kfolds_alpha_metrics_table.csv', index=False)
-
+df.to_csv(f'results{path}/kfolds_alpha_metrics_table.csv', index=False)
 
 df_master = pd.DataFrame()
-for csv in sorted(glob.glob('results/kfolds_alpha_*coefficients.csv')):
+for csv in sorted(glob.glob(f'results{path}/kfolds_alpha_*coefficients.csv')):
     try:
         df = pd.read_csv(csv)
-        alpha = float(csv.split('_')[2])
+        alpha = float(os.path.basename(csv).split('_')[2])
         df[df == 0] = np.nan
         df = df.dropna(axis=1, how='all')
         a = df.count()
@@ -58,4 +64,5 @@ for csv in sorted(glob.glob('results/kfolds_alpha_*coefficients.csv')):
         print(e)
         print(csv)
 
-df_master.groupby('term_count').median().sort_index(ascending=False).to_csv('results/kfolds_alpha_coefficients_table.csv')
+df_master.groupby('term_count').median().sort_index(ascending=False).to_csv(
+    f'results{path}/kfolds_alpha_coefficients_table.csv', index=False)
